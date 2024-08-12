@@ -65,7 +65,7 @@ export async function loginUser(formData: FormData) {
     return { hashedCredentials };
     //redirect('/dashboard');
 }
-export default async function auth(cookie:string) {
+export async function auth(cookie:string) {
     
     const cookieValue = cookie;
     if (!cookieValue) {

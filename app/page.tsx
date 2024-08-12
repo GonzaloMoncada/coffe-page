@@ -1,39 +1,45 @@
-'use client';
-import { loginUser } from "./lib/actions";
-import { serialize } from 'cookie';
-import { getCookie } from "cookies-next";
-import { useState } from 'react';
-export default function Home() {
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {    
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
-    const response = await loginUser(formData);
-
-    if (!response) {
-      console.log('error');
-    } else {
-      // Guardar el token en la cookie
-      document.cookie = serialize('token', response.hashedCredentials, {
-        httpOnly: false, // Para el cliente
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60, // 1 hora
-        path: '/'
-      });
-
-      // Redirigir al usuario
-      window.location.href = '/dashboard';
-    }
-    
-  };
+import React from 'react'
+import styles from './ui/homeCliente.module.css'
+import Image from 'next/image'
+export default function page() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-        <input type="email" name="email" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="" />
-        <input type="password" name="password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="" />
-        <input type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded" />
-      </form>
-    </main>
-  );
+    <div className={`grid min-h-full grid-rows-[1fr_auto] ${styles.container}`}>
+      <main className='w-screen flex justify-center'>
+        <div className='w-screen sm:w-1/3 bg-zinc-200'>
+          <div className='relative'>
+            <div className='w-full h-[22vh] relative  overflow-hidden'>
+              <Image
+                src='https://cdn.discordapp.com/attachments/1062425698200985670/1271234979099312149/coffeImage.jpg?ex=66b69955&is=66b547d5&hm=65465a16b26ca33b9538e9c9396443ff9fc21260ac6a09b0cd85c2757651f181&'
+                alt='coffeLocal'
+                layout='responsive'
+                width={100}
+                height={300}
+                objectFit='cover'
+                className='absolute inset-0'
+              />
+            </div>
+          </div>
+          <div>
+            <div className='w-full h-[25vh] flex justify-center items-center'>
+              <Image
+              src='https://cdn.discordapp.com/attachments/1062425698200985670/1271221264194998393/coffeIcon.jpeg?ex=66b68c8f&is=66b53b0f&hm=40533ac7eeaccbb4df11cf1d831856c3945f9e8a622c36add12861b39e3520eb&'
+              alt='coffeIcon'
+              width={100}
+              height={300}
+              className='border rounded-full border-transparent shadow-xl'
+              />
+
+            </div>
+
+          </div>
+        </div>
+      </main>
+      <footer className='bg-zinc-900 py-4 flex justify-center'>
+        <a href="https://instagram.com/coffeonthe_go" target="_blank" rel="noopener noreferrer" className='flex flex-row gap-1'>
+          <Image src="/ig.svg" alt="ig" width={24} height={24} />
+          <span className='text-white text-lg'>@coffeonthe_go</span>
+        </a>
+      </footer>
+    </div>
+  )
 }
