@@ -8,6 +8,8 @@ export async function posts() {
       posts.id AS Id,
       posts.title AS Title,
       posts.image AS Image,
+      posts.position AS Position,
+      posts.template AS Template,
       categories.name AS categoryName,
       json_agg(
         json_build_object(
@@ -29,6 +31,8 @@ export async function posts() {
       products.idPost = posts.id
     GROUP BY 
       posts.id, categories.name
+    ORDER BY 
+      posts.position
   `;
     return result.rows;
   }

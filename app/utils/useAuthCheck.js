@@ -1,7 +1,7 @@
 // hooks/useAuthCheck.js
 import { useEffect, useState } from 'react';
 import { getCookie } from 'cookies-next';
-import auth from '../lib/actions';
+import { auth } from '../lib/actions';
 const useAuthCheck = () => {
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +16,7 @@ const useAuthCheck = () => {
 
   return loading;
 };
+
 async function checkCookieAndRedirect() {
     const cookieValue = getCookie('token');
     
