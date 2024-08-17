@@ -11,11 +11,9 @@ const users = [
 const products = [
   { name: 'Negro', description: 'Cafe negro de Africa', price: 10, idPost: '1' },
 ];
-const categories = [
-  { name: 'Cafe' },
-]
+
 const posts = [
-  { title: 'Cafes Go', image: 'https://cdn.discordapp.com/attachments/1062425698200985670/1271221264194998393/coffeIcon.jpeg?ex=66ba810f&is=66b92f8f&hm=5370c42c8586bc81291f358dd800328fb1a90ddfaee29abe53eacffd86256853&',position: 1, template: 1, idCategory: '1' },
+  { title: 'Cafes Go', image: 'https://cdn.discordapp.com/attachments/1062425698200985670/1271221264194998393/coffeIcon.jpeg?ex=66ba810f&is=66b92f8f&hm=5370c42c8586bc81291f358dd800328fb1a90ddfaee29abe53eacffd86256853&',position: 1, template: 1 },
 ]
 async function seedUsers() {
   const client = await db.connect();
@@ -31,15 +29,6 @@ CREATE TABLE IF NOT EXISTS users (
   hashedCookies TEXT
 );
 `;
-
-    // Create table for categories
-    await client.sql`
-CREATE TABLE IF NOT EXISTS categories (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL UNIQUE 
-);
-`;
-
     // Create table for posts
     await client.sql`
 CREATE TABLE IF NOT EXISTS posts (
@@ -47,9 +36,7 @@ CREATE TABLE IF NOT EXISTS posts (
   title VARCHAR(255) NOT NULL UNIQUE,
   image TEXT NULL,
   position INTEGER NOT NULL,
-  template INTEGER NOT NULL,
-  idCategory INTEGER NOT NULL,
-  FOREIGN KEY (idCategory) REFERENCES categories(id)
+  template INTEGER NOT NULL
 );
 `;
     // Create table for products
@@ -77,23 +64,13 @@ CREATE TABLE IF NOT EXISTS products (
         `;
       })
     );
-    // Insert categories
-    const insertedCategories = await Promise.all(
-      categories.map(async (category) => {
-        return client.sql`
-          INSERT INTO categories (name)
-          VALUES (${category.name})
-          ON CONFLICT (name) DO NOTHING;
-        `;
-      })
-    );
 
     // Insert posts
     const insertedPosts = await Promise.all(
       posts.map(async (post) => {
         return client.sql`
-          INSERT INTO posts (title, image, position, template, idCategory)
-          VALUES (${post.title}, ${post.image}, ${post.position}, ${post.template}, ${post.idCategory})
+          INSERT INTO posts (title, image, position, template)
+          VALUES (${post.title}, ${post.image}, ${post.position}, ${post.template})
           ON CONFLICT (title) DO NOTHING;
         `;
       })

@@ -39,13 +39,13 @@ export async function loginUser(formData: FormData) {
     `;
     // Verificar si el usuario existe
     const user = result.rows[0]; // Obtener la primera fila del resultado
-    
+
     if (!user) {
         throw new Error('User not found');
     }
 
     // Comparar la contraseña ingresada con la contraseña hasheada
-    const isPasswordValid = await bcrypt.compare(password, user.password);    
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
         throw new Error('Invalid email or password');
     }
@@ -61,12 +61,12 @@ export async function loginUser(formData: FormData) {
         SET hashedCookies = ${hashedCredentials}
         WHERE email = ${email}
     `;
-    
+
     return { hashedCredentials };
     //redirect('/dashboard');
 }
-export async function auth(cookie:string) {
-    
+export async function auth(cookie: string) {
+
     const cookieValue = cookie;
     if (!cookieValue) {
         return false;
@@ -77,16 +77,43 @@ export async function auth(cookie:string) {
         FROM users
         WHERE hashedcookies = ${cookieValue}
         `;
-  
-      const user = result.rows[0];
-        
-      if (user) {
-          return true;
-      } else {
-        return false;
-      }
+
+        const user = result.rows[0];
+
+        if (user) {
+            return true;
+        } else {
+            return false;
+        }
     } catch (error) {
-      console.error(error);
-      return false;
+        console.error(error);
+        return false;
     }
-  }
+}
+
+export async function putPosts(formData: FormData) {
+    const jsonString = formData.get('data') as string;
+    if (!jsonString) {
+        throw new Error('No data provided');
+    }
+    const data = JSON.parse(jsonString);
+    try {
+        for (const item of data) {
+            const id = item.id;
+            const title = item.title;
+            const template = item.template;
+            const image = item.image;
+            const position = item.position;
+            // Ejecutar la consulta de actualización
+            await sql`
+                UPDATE posts
+                SET title = ${title}, image = ${image}, position = ${position}, template = ${template}
+                WHERE id = ${id};
+            `;
+        }
+        console.log('Data updated successfully.');
+    } catch (error) {
+        console.error('Error updating data:', error);
+        throw new Error('Failed to update data');
+    }
+}

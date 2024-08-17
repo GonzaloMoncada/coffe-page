@@ -1,6 +1,4 @@
 .container{
-    background-color: #000000;
-    opacity: 0.8;
-    background-image: radial-gradient(#2f2e2e 0.5px, #000000 0.5px);
+    background-image: radial-gradient(#2f2e2e 0.5px, #1f1f1f 0.5px);
     background-size: 10px 10px;
 }

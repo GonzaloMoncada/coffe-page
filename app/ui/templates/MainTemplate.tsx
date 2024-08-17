@@ -1,11 +1,13 @@
 import React from 'react'
 import { Template1, Template2, Template3, Template4 } from './Template'
+import { Post } from '@/app/interface/types';
 
 interface MainTemplateProps {
     template: number;
-    data: any | null;
+    data: Post | null;
 }
 export default function MainTemplate( {template, data}: MainTemplateProps ) {
+    
     switch (template) {
         case 1:
             return <Template1 data={data} />
