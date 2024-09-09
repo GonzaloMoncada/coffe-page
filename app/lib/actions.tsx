@@ -2,6 +2,7 @@
 
 import { sql } from "@vercel/postgres";
 import bcrypt from 'bcrypt';
+import { Post } from "../interface/types";
 
 export async function createUser(formData: FormData) {
     // Obtener los valores del formulario y asegurar que no sean nulos
@@ -96,7 +97,38 @@ export async function putPosts(formData: FormData) {
     if (!jsonString) {
         throw new Error('No data provided');
     }
-    const data = JSON.parse(jsonString);
+    const data = JSON.parse(jsonString); 
+    
+    if(data.length == undefined){
+        try {
+            const id = data.id;
+            const title = data.title;
+            const template = data.template;
+            const image = data.image;
+            const position = data.position;
+            await sql`
+                UPDATE posts
+                SET title = ${title}, image = ${image}, position = ${position}, template = ${template}
+                WHERE id = ${id};
+            `;
+            data.products.forEach(async (product: any) => {
+                const id = product.id;
+                const name = product.name;
+                const description = product.description;
+                const price = product.price;
+                await sql`
+                    UPDATE products
+                    SET name = ${name}, price = ${price}, description = ${description}
+                    WHERE id = ${id};
+                `;
+            })
+            console.log('Data updated successfully.');
+        } catch (error) {
+            console.error('Error updating data:', error);
+            throw new Error('Failed to update data');
+        }
+    }
+    else{
     try {
         for (const item of data) {
             const id = item.id;
@@ -104,6 +136,7 @@ export async function putPosts(formData: FormData) {
             const template = item.template;
             const image = item.image;
             const position = item.position;
+            
             // Ejecutar la consulta de actualización
             await sql`
                 UPDATE posts
@@ -115,5 +148,48 @@ export async function putPosts(formData: FormData) {
     } catch (error) {
         console.error('Error updating data:', error);
         throw new Error('Failed to update data');
+    }
+    }
+}
+export async function deletePost(data: Post) {
+    //delete products 
+    await sql`
+        DELETE FROM products
+        WHERE idPost = ${data.id};
+    `;
+    //delete posts
+    await sql`
+        DELETE FROM posts
+        WHERE id = ${data.id};
+    `;
+}
+export async function putProducts(formData: FormData) {
+    const numbersSet = new Set<number>();
+    const formDataObject: { [key: string]: string } = {};
+    formData.forEach((value, key) => {
+        formDataObject[key] = value.toString();
+    });
+    for (const key in formDataObject) {
+        const match = key.match(/\d+$/);
+        if (match) {
+            const number = parseInt(match[0], 10); // Convertir el número de cadena a entero
+            numbersSet.add(number); // Agregar al Set, eliminando duplicados automáticamente
+        }
+    }
+
+    // Convertir el Set a un array y ordenar en orden ascendente
+    const numbers = Array.from(numbersSet).sort((a, b) => a - b);
+    for (let i = 0; i < numbers.length; i++) {
+        const objectProduct = {
+            id: numbers[i],
+            name: formData.get(`name${numbers[i]}`) as string,
+            description: formData.get(`description${numbers[i]}`) as string,
+            price: formData.get(`price${numbers[i]}`) as string,
+        }
+        await sql`
+                UPDATE products
+                SET name = ${objectProduct.name}, description = ${objectProduct.description}, price = ${objectProduct.price}
+                WHERE id = ${objectProduct.id};
+            `;
     }
 }

@@ -3,7 +3,7 @@
 import { sql } from "@vercel/postgres";
 import { PostData } from "../interface/types";
 
-export async function posts(): Promise<PostData[]>{
+export async function posts(): Promise<PostData[]> {
   const result = await sql`
       SELECT 
       posts.id AS Id,
@@ -18,6 +18,7 @@ export async function posts(): Promise<PostData[]>{
           'description', products.description,
           'price', products.price
         )
+        ORDER BY products.id 
       ) AS products
     FROM 
       posts
