@@ -1,0 +1,28 @@
+services:
+
+  coffepage:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    depends_on:
+    - postgres
+    links:
+      - postgres
+    volumes:
+      - .:/home/app
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: cafe
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: coffe
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

@@ -14,8 +14,8 @@ export default function ManageMenu() {
     const changeData = (updatedPost: Post, deletePosts: boolean) => {
         console.log(oldData);
         console.log(Data);
-        
-        
+
+
         const index = Data?.findIndex(post => post.id === updatedPost.id);
         if (index !== -1) {
             if (deletePosts) {
@@ -31,7 +31,6 @@ export default function ManageMenu() {
     }
     const getData = async () => {
         const postData: PostData[] = await posts();
-        
         setData(postData);
         setOldData(postData.map(post => ({ ...post })));
     }
@@ -90,7 +89,7 @@ export default function ManageMenu() {
             ) : (
                 Data.map((data, index) => (
                     <div key={index} className='flex flex-col w-full'>
-                        <MainTemplate template={data.template} oldData={oldData && oldData[index] !== undefined ? oldData[index] : null} data={data} changeData={changeData} handleButtonPlus={handleButtonPlus} index={index} change={change} setChange={setchange}/>
+                        <MainTemplate template={data.template} oldData={oldData && oldData[index] !== undefined ? oldData[index] : null} data={data} changeData={changeData} handleButtonPlus={handleButtonPlus} index={index} change={change} setChange={setchange} />
                         <button onClick={() => handleRemoveForm(index, true)}>Remove</button>
                         <div className="inline-flex">
                             <button className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l ${data.template <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -112,7 +111,7 @@ export default function ManageMenu() {
             {/* Add new posts */}
             {forms.map((form, index) => (
                 <div key={index}>
-                    <MainTemplate template={form} data={null} oldData={oldData && oldData[index] !== undefined ? oldData[index] : null} changeData={changeData} handleButtonPlus={handleButtonPlus} index={null} change={change} setChange={setchange}/>
+                    <MainTemplate template={form} data={null} oldData={oldData && oldData[index] !== undefined ? oldData[index] : null} changeData={changeData} handleButtonPlus={handleButtonPlus} index={null} change={change} setChange={setchange} />
                     <button onClick={() => handleRemoveForm(index, false)}>Remove</button>
                     <div className="inline-flex">
                         <button className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l ${form <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
