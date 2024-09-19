@@ -11,10 +11,6 @@ export default function menu() {
         setPostData(post);
     }
     useEffect(() => {
-        if (postData)
-            console.log(postData[0]);
-    }, [postData]);
-    useEffect(() => {
         getPosts();
     }, []);
     if (postData === undefined) {

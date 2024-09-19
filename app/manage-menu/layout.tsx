@@ -1,21 +1,16 @@
-'use client'
-import React, { Children } from 'react'
-import useAuthCheck from '../utils/useAuthCheck';
+import React from 'react';
 import SkeletonManageMenu from '../ui/Skeletons/SkeletonManageMenu';
 
-export default function LayoutManager(
-    {
-        children
-    }: Readonly<{
-        children: React.ReactNode;
-    }>
-) {
-    const loading = useAuthCheck();
-    if (loading)
-        return <SkeletonManageMenu />;
-    return (
-        <div>
-            {children}
-        </div>
-    )
+interface LayoutManagerProps {
+  children: React.ReactNode;
 }
+
+const LayoutManager: React.FC<LayoutManagerProps> = ({ children }) => {
+  return (
+    <div>
+      {children}
+    </div>
+  );
+};
+
+export default LayoutManager;

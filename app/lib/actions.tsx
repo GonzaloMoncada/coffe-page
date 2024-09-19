@@ -1,10 +1,7 @@
 'use server';
 import bcrypt from 'bcrypt';
 import { Post } from "../interface/types";
-import pkg from 'pg';
-import { pool } from '../../scripts/seed';
-
-const { Pool } = pkg;
+import { pool } from './db';
 
 // Función para crear un nuevo usuario
 export async function createUser(formData: FormData) {
@@ -17,7 +14,7 @@ export async function createUser(formData: FormData) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     const client = await pool.connect();
     try {
         await client.query(`
@@ -51,46 +48,26 @@ export async function loginUser(formData: FormData) {
         if (!user) {
             throw new Error('User not found');
         }
-
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             throw new Error('Invalid email or password');
         }
 
         const combinedCredentials = `${email}:${password}`;
-        const hashedCredentials = await bcrypt.hash(combinedCredentials, 10);
+        const randomSaltRounds = Math.floor(Math.random() * 6) + 10;
+        const hashedCredentials = await bcrypt.hash(combinedCredentials, randomSaltRounds);
+        if (hashedCredentials) {
+            await client.query(`
+                UPDATE users
+                SET hashedCookies = $1
+                WHERE email = $2
+                `, [hashedCredentials, email]);
 
-        await client.query(`
-            UPDATE users
-            SET hashedCookies = $1
-            WHERE email = $2
-        `, [hashedCredentials, email]);
-
+        }
         return { hashedCredentials };
     } catch (error) {
         console.error('Error logging in user:', error);
         throw new Error('Login failed');
-    } finally {
-        client.release();
-    }
-}
-
-// Función para autenticar al usuario
-export async function auth(cookie: string) {
-    if (!cookie) {
-        return false;
-    }
-
-    const client = await pool.connect();
-    try {
-        const result = await client.query(`
-            SELECT * FROM users WHERE hashedCookies = $1
-        `, [cookie]);
-
-        return result.rows.length > 0;
-    } catch (error) {
-        console.error('Error authenticating user:', error);
-        return false;
     } finally {
         client.release();
     }
@@ -102,9 +79,8 @@ export async function putPosts(formData: FormData) {
     if (!jsonString) {
         throw new Error('No data provided');
     }
-    
-    const data = JSON.parse(jsonString);
 
+    const data = JSON.parse(jsonString);
     const client = await pool.connect();
     try {
         if (Array.isArray(data)) {

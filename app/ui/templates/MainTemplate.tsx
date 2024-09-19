@@ -5,7 +5,7 @@ import { Post } from '@/app/interface/types';
 interface MainTemplateProps {
     template: number;
     data: Post | null;
-    changeData: Function;
+    changeData: Function; // Updates a post
     handleButtonPlus : Function;
     index: number | null;
     oldData: Post | null;

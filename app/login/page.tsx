@@ -1,15 +1,12 @@
 'use client';
 import { loginUser } from "../lib/actions";
 import { serialize } from 'cookie';
-import { useState } from 'react';
 export default function Home() {
-  const [error, setError] = useState('');
-
   const handleSubmit = async (e: React.FormEvent) => {    
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const response = await loginUser(formData);
-
+    
     if (!response) {
       console.log('error');
     } else {
@@ -17,12 +14,11 @@ export default function Home() {
       document.cookie = serialize('token', response.hashedCredentials, {
         httpOnly: false, // Para el cliente
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60, // 1 hora
         path: '/'
       });
 
       // Redirigir al usuario
-      window.location.href = '/dashboard';
+      window.location.href = '/manage-menu';
     }
     
   };

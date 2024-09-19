@@ -2,7 +2,7 @@
 
 import { PostData } from "../interface/types";
 import pkg from 'pg';
-import { pool } from '../../scripts/seed';
+import { pool } from './db';
 const { Pool } = pkg;
 // Configuración de la conexión a la base de datos
 
